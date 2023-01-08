@@ -1,3 +1,8 @@
+locals {
+  # Side step the 'prefixed or suffixed slash' semantics by removing both and adding them where needed
+  bucket_prefix = trim(var.bucket_prefix, "/")  
+}
+
 data "aws_iam_policy_document" "hugo" {
   # Origin Access Control
   # See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html
@@ -8,7 +13,7 @@ data "aws_iam_policy_document" "hugo" {
       identifiers = ["cloudfront.amazonaws.com"]
     }
     actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::${var.bucket_name}/${var.bucket_prefix}"]
+    resources = ["arn:aws:s3:::${var.bucket_name}/${local.bucket_prefix}"]
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
@@ -20,14 +25,6 @@ data "aws_iam_policy_document" "hugo" {
 resource "aws_s3_bucket" "hugo" {
   bucket        = var.bucket_name
   force_destroy = true
-
-  website {
-    index_document = var.index_document
-    error_document = "${var.bucket_prefix}/${var.error_document}"
-
-    // Routing rule is needed to support hugo friendly urls
-    routing_rules = var.routing_rules
-  }
 }
 
 resource "aws_s3_bucket_acl" "hugo" {
@@ -68,7 +65,8 @@ resource "aws_s3_bucket_cors_configuration" "hugo" {
  * Create CloudFront distribution for SSL support but caching disabled, leave that to Cloudflare
  */
 locals {
-  hugo_origin_id = "hugo-origin-s3"
+  hugo_origin_id      = "hugo-origin-s3"
+  default_root_object = var.default_root_object != "" ? var.default_root_object : var.index_document
 }
 
 resource "aws_cloudfront_origin_access_control" "hugo" {
@@ -82,7 +80,7 @@ resource "aws_cloudfront_origin_access_control" "hugo" {
 resource "aws_cloudfront_distribution" "hugo" {
   enabled             = true
   is_ipv6_enabled     = true
-  default_root_object = var.default_root_object
+  default_root_object = local.default_root_object
   aliases             = var.aliases
   price_class         = var.cf_price_class
 
@@ -90,7 +88,7 @@ resource "aws_cloudfront_distribution" "hugo" {
     domain_name              = aws_s3_bucket.hugo.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.hugo.id
     origin_id                = local.hugo_origin_id
-    origin_path              = var.bucket_prefix
+    origin_path              = "/${local.bucket_prefix}"
   }
 
   dynamic "custom_error_response" {

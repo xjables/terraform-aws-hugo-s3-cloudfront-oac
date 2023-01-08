@@ -104,8 +104,8 @@ variable "custom_error_response" {
 
 variable "default_root_object" {
   type        = string
-  description = "CloudFront distribution default_root_object"
-  default     = "index.html"
+  description = "This value defaults to the `var.index_document`."
+  default     = ""
 }
 
 variable "error_document" {

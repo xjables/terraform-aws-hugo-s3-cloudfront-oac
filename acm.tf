@@ -4,7 +4,8 @@ locals {
 
 # Data toggle for acm certificate
 resource "aws_acm_certificate" "hugo" {
-  count = var.create_cert ? 1 : 0
+  provider = aws.virginia
+  count    = var.create_cert ? 1 : 0
 
   domain_name       = var.cert_domain
   validation_method = "DNS"
@@ -13,6 +14,8 @@ resource "aws_acm_certificate" "hugo" {
 }
 
 data "aws_acm_certificate" "hugo" {
+  provider = aws.virginia
+
   domain = var.create_cert ? aws_acm_certificate.hugo[0].domain_name : var.cert_domain
 }
 
@@ -41,7 +44,8 @@ resource "aws_route53_record" "this" {
 }
 
 resource "aws_acm_certificate_validation" "hugo" {
-  count = var.create_cert ? 1 : 0
+  provider = aws.virginia
+  count    = var.create_cert ? 1 : 0
 
   certificate_arn         = data.aws_acm_certificate.hugo.arn
   validation_record_fqdns = [for record in aws_route53_record.this : record.fqdn]
