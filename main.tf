@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "hugo" {
       identifiers = ["cloudfront.amazonaws.com"]
     }
     actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::${var.bucket_name}/${local.bucket_prefix}"]
+    resources = ["arn:aws:s3:::${var.bucket_name}/${local.bucket_prefix}/*"]
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
