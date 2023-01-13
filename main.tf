@@ -1,6 +1,6 @@
 locals {
   # Side step the 'prefixed or suffixed slash' semantics by removing both and adding them where needed
-  bucket_prefix = trim(var.bucket_prefix, "/")  
+  bucket_prefix = trim(var.bucket_prefix, "/")
 }
 
 data "aws_iam_policy_document" "hugo" {
@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "hugo" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
-      values   = ["<TODO: cloudfront distribution arn>"]
+      values   = [aws_cloudfront_distribution.hugo.arn]
     }
   }
 }
