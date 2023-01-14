@@ -6,7 +6,7 @@ output "acm_certificate_arn" {
   value = data.aws_acm_certificate.hugo.arn
 }
 
-output "cloudfront_hostname" {
+output "cloudfront_domain_name" {
   value = aws_cloudfront_distribution.hugo.domain_name
 }
 
