@@ -40,6 +40,7 @@ resource "aws_lambda_function" "hugo_rewrite" {
   handler          = "rewrite_requests.handler"
   runtime          = "python3.9"
   source_code_hash = data.archive_file.hugo_rewrite[0].output_base64sha256
+  publish          = true
 
   environment {
     variables = {
