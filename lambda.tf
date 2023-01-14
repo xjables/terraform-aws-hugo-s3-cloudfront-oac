@@ -1,4 +1,5 @@
 data "aws_iam_policy_document" "lambda_edge_assume" {
+  provider = aws.virginia
   count = var.pretty_urls ? 1 : 0
 
   statement {
@@ -17,6 +18,7 @@ data "aws_iam_policy_document" "lambda_edge_assume" {
 }
 
 resource "aws_iam_role" "lambda_edge" {
+  provider = aws.virginia
   count = var.pretty_urls ? 1 : 0
 
   name               = "lambda_edge_${local.unique}"
@@ -32,6 +34,7 @@ data "archive_file" "hugo_rewrite" {
 }
 
 resource "aws_lambda_function" "hugo_rewrite" {
+  provider = aws.virginia
   count = var.pretty_urls ? 1 : 0
 
   function_name    = "hugo_url_rewrite_${local.unique}"
@@ -39,6 +42,7 @@ resource "aws_lambda_function" "hugo_rewrite" {
   role             = aws_iam_role.lambda_edge[0].arn
   handler          = "rewrite_requests.handler"
   runtime          = "python3.9"
+  memory_size      = 128
   source_code_hash = data.archive_file.hugo_rewrite[0].output_base64sha256
   publish          = true
 
