@@ -122,7 +122,7 @@ resource "aws_cloudfront_distribution" "hugo" {
 
       content {
         event_type   = "origin-request"
-        lambda_arn   = aws_lambda_function.hugo_rewrite[0].arn
+        lambda_arn   = aws_lambda_function.hugo_rewrite[0].qualified_arn
         include_body = true
       }
 
