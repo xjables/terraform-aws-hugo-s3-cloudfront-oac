@@ -47,6 +47,15 @@ resource "aws_s3_bucket_website_configuration" "hugo" {
   error_document {
     key = var.error_document
   }
+
+  routing_rule {
+    condition {
+      key_prefix_equals = "/"
+    }
+    redirect {
+      replace_key_prefix_with = "index.html"
+    }
+  }
 }
 
 resource "aws_s3_bucket_cors_configuration" "hugo" {
