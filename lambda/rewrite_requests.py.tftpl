@@ -1,8 +1,6 @@
-import os
-
 index_document = "${index_document}"
 
-def handler(event):
+def handler(event, context):
     request = event["Records"][0]["cf"]["request"]
     uri = request["uri"]
     if uri.endswith("/"):

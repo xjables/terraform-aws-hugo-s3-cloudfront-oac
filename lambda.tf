@@ -17,6 +17,17 @@ data "aws_iam_policy_document" "lambda_edge_assume" {
   }
 }
 
+data "aws_iam_policy_document" "lambda_edge_log" {
+  statement {
+    resources = ["*"]
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+    ]
+  }
+}
+
 resource "aws_iam_role" "lambda_edge" {
   provider = aws.virginia
   count    = var.pretty_urls ? 1 : 0
@@ -29,7 +40,7 @@ data "archive_file" "hugo_rewrite" {
   count = var.pretty_urls ? 1 : 0
 
   type                    = "zip"
-  source_content          = templatefile("${path.module}/lambda/rewrite_requests.py.tftpl", {index_document = var.index_document})
+  source_content          = templatefile("${path.module}/lambda/rewrite_requests.py.tftpl", { index_document = var.index_document })
   source_content_filename = "rewrite_requests.py"
   output_path             = "${path.module}/lambda/rewrite_requests.zip"
 }
