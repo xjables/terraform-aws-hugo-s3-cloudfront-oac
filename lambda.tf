@@ -38,6 +38,7 @@ resource "aws_lambda_function" "hugo_rewrite" {
   filename         = data.archive_file.hugo_rewrite[0].output_path
   role             = aws_iam_role.lambda_edge[0].arn
   handler          = "rewrite_requests.handler"
+  runtime          = "python3.9"
   source_code_hash = data.archive_file.hugo_rewrite[0].output_base64sha256
 
   environment {
