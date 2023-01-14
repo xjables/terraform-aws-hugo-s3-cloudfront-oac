@@ -4,7 +4,7 @@ data "aws_iam_policy_document" "lambda_edge_assume" {
   statement {
     sid = "AllowCFToAssume"
     principals {
-      type = "service"
+      type = "Service"
       identifiers = [
         "lambda.amazonaws.com",
         "edgelambda.amazonaws.com",
