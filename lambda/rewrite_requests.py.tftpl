@@ -1,6 +1,6 @@
 import os
 
-index_document = os.getenv["INDEX_DOCUMENT"]
+index_document = "${index_document}"
 
 def handler(event):
     request = event["Records"][0]["cf"]["request"]
