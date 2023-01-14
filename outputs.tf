@@ -25,3 +25,8 @@ output "s3_bucket_code_uri_path" {
 output "s3_bucket_arn" {
   value = aws_s3_bucket.hugo.arn
 }
+
+output "unique_id" {
+  value       = local.unique
+  description = "A unique ID for identifying resources created by this instance of the module when a naming convention otherwise wouldn't fit the context."
+}

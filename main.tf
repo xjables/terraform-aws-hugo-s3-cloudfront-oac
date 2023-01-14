@@ -1,6 +1,8 @@
 locals {
   # Side step the 'prefixed or suffixed slash' semantics by removing both and adding them where needed
   bucket_prefix = trim(var.bucket_prefix, "/")
+  # A unique ID for identifying objects created by this module
+  unique = substr(sha256(var.bucket_name), 0, 8)
 }
 
 data "aws_iam_policy_document" "hugo" {
@@ -70,9 +72,6 @@ resource "aws_s3_bucket_cors_configuration" "hugo" {
   }
 }
 
-/*
- * Create CloudFront distribution for SSL support but caching disabled, leave that to Cloudflare
- */
 locals {
   hugo_origin_id      = "hugo-origin-s3"
   default_root_object = var.default_root_object != "" ? var.default_root_object : var.index_document
@@ -117,6 +116,17 @@ resource "aws_cloudfront_distribution" "hugo" {
     min_ttl                = var.cf_min_ttl
     default_ttl            = var.cf_default_ttl
     max_ttl                = var.cf_max_ttl
+
+    dynamic "lambda_function_association" {
+      for_each = var.pretty_urls ? [1] : []
+
+      content {
+        event_type   = "origin-request"
+        lambda_arn   = aws_lambda_function.hugo_pretty[0].arn
+        include_body = true
+      }
+
+    }
 
     forwarded_values {
       query_string = false

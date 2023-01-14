@@ -15,6 +15,12 @@ variable "bucket_prefix" {
   default     = "public"
 }
 
+variable "pretty_urls" {
+  type        = bool
+  description = "If you are using pretty urls (default behavior in Hugo) leave this as true, otherwise, if using ugly urls, set this to false."
+  default     = true
+}
+
 variable "cert_domain" {
   type        = string
   description = "Domain name to use for ACM certificate. If this module does not create the certificate, it must already exist in us-east-1."
@@ -116,7 +122,7 @@ variable "error_document" {
 
 variable "index_document" {
   type        = string
-  description = "Index page document in S3 bucket"
+  description = "The index document used as the root document for each sub-path on the site."
   default     = "index.html"
 }
 
