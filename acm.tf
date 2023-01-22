@@ -48,6 +48,6 @@ resource "aws_acm_certificate_validation" "hugo" {
   provider = aws.virginia
   count    = var.create_cert ? 1 : 0
 
-  certificate_arn         = data.aws_acm_certificate.hugo.arn
+  certificate_arn         = aws_acm_certificate.hugo.arn
   validation_record_fqdns = [for record in aws_route53_record.this : record.fqdn]
 }
