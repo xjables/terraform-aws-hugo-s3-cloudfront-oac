@@ -15,7 +15,7 @@ resource "aws_acm_certificate" "hugo" {
 
 data "aws_acm_certificate" "hugo" {
   provider   = aws.virginia
-  depends_on = [aws_acm_certificate.hugo]
+  depends_on = [aws_acm_certificate_validation.hugo]
 
   domain = var.create_cert ? aws_acm_certificate.hugo[0].domain_name : var.cert_domain
 }
